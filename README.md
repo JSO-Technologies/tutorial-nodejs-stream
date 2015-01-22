@@ -1,27 +1,21 @@
 # tutorial-nodejs-stream
 
-Send an HTTP POST request to http://localhost:8000 and pipe process.stdin into
-it. Pipe the response stream to process.stdout.
+In this adventure, write some browser code that uses the websocket-stream module
+to print the string "hello\n".
 
-Here's an example of how to use the `request` module to send a GET request,
-piping the result to stdout:
+Your solution file will be compiled with browserify and the verify script will
+prompt you to open `http://localhost:8000` in a browser to verify your solution.
 
-    var request = require('request');
-    request('http://beep.boop:80/').pipe(process.stdout);
+To open a stream with websocket-stream on localhost:8000, just write:
 
-To make a POST request, just call `request.post()` instead of `request()`:
+    var ws = require('websocket-stream');
+    var stream = ws('ws://localhost:8000');
+   
+Then write the string "hello\n" to the stream and end the stream.
 
-    var request = require('request');
-    var r = request.post('http://beep.boop:80/');
-    
-The `r` object that you get back from `request.post()` is a readable+writable
-stream so you can pipe a readable stream into it (`src.pipe(r)`) and you can
-pipe it to a writable stream (`r.pipe(dst)`).
+The readme for websocket-stream has more info if you're curious about how to
+write the server side code: https://github.com/maxogden/websocket-stream
 
-You can even chain both steps together: src.pipe(r).pipe(dst);
-
-Hint: for your code, src will be process.stdin and dst will be process.stdout.
-
-Make sure to `npm install request` in the directory where your solution file
-lives.
+Make sure to `npm install websocket-stream` in the directory where your solution
+file lives.
 
