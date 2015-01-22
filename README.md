@@ -1,4 +1,4 @@
 # tutorial-nodejs-stream
 
-http://nodeschool.io/index.html#workshoppers
-npm install -g stream-adventure
+Just to make sure everything is working, just write a `program.js` that outputs
+the string "beep boop" with a `console.log()`.
