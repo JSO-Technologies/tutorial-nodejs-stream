@@ -1,17 +1,9 @@
+var concat = require('concat-stream');
 var through = require('through');
-var split = require('split');
 
-var line = 0;
-
-var caseTransformer = function(buff) {
-    line ++;
-    this.queue((line % 2 == 0 ?
-        buff.toString().toUpperCase() :
-        buff.toString().toLowerCase())
-        + '\n');
+var reverse = function(buff) {
+    console.log(buff.toString().split('').reverse().join(''));
 };
 
 process.stdin
-    .pipe(split())
-    .pipe(through(caseTransformer))
-    .pipe(process.stdout);
+    .pipe(concat(reverse));

@@ -1,44 +1,29 @@
 # tutorial-nodejs-stream
 
-Instead of transforming every line as in the previous "INPUT OUTPUT" example,
-for this challenge, convert even-numbered lines to upper-case and odd-numbered
-lines to lower-case. Consider the first line to be odd-numbered. For example
-given this input:
+You will be given text on process.stdin. Buffer the text and reverse it using
+the `concat-stream` module before writing it to stdout.
 
-    One
-    Two
-    Three
-    Four
+`concat-stream` is a write stream that you can pass a callback to to get the
+complete contents of a stream as a single buffer. Here's an example that uses
+concat to buffer POST content in order to JSON.parse() the submitted data:
 
-Your program should output:
+    var concat = require('concat-stream');
+    var http = require('http');
+    
+    var server = http.createServer(function (req, res) {
+        if (req.method === 'POST') {
+            req.pipe(concat(function (body) {
+                var obj = JSON.parse(body);
+                res.end(Object.keys(obj).join('\n'));
+            }));
+        }
+        else res.end();
+    });
+    server.listen(5000);
 
-    one
-    TWO
-    three
-    FOUR
+In your adventure you'll only need to buffer input with `concat()` from
+process.stdin.
 
-You can use the `split` module to split input by newlines. For example:
-
-    var split = require('split');
-    process.stdin
-        .pipe(split())
-        .pipe(through(function (line) {
-            console.dir(line.toString());
-        }))
-    ;
-
-Will buffer and split chunks on newlines before you get them. For example, for
-the `split.js` we just wrote we will get separate events for each line even
-though the data probably all arrives on the same chunk:
-
-    $ echo -e 'one\ntwo\nthree' | node split.js
-    'one'
-    'two'
-    'three'
-
-Your own program should use `split` in this way, but you should transform the
-input and pipe the output through to `process.stdout`.
-
-Make sure to `npm install split through` in the directory where your solution
-file lives.
+Make sure to `npm install concat-stream` in the directory where your solution
+file is located.
 
