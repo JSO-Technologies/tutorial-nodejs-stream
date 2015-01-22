@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "split": "^0.3.2",
     "through": "^2.3.6"
   }
 }

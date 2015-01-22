@@ -1,54 +1,44 @@
 # tutorial-nodejs-stream
 
-Convert data from `process.stdin` to upper-case data on `process.stdout`
-using the `through` module.
+Instead of transforming every line as in the previous "INPUT OUTPUT" example,
+for this challenge, convert even-numbered lines to upper-case and odd-numbered
+lines to lower-case. Consider the first line to be odd-numbered. For example
+given this input:
 
-through(write, end) returns a readable/writable stream and given `write` and
-`end` functions, both of which are optional.
+    One
+    Two
+    Three
+    Four
 
-When you call `src.pipe(dst)` on some stream `dst` created with `through()`, the
-`write(buf)` function will be called when data from `src` is available.
-When `src` is done sending data, the `end()` function is called.
+Your program should output:
 
-Inside the `write` and `end` callbacks, `this` is set to the through stream
-returned by `through()` so you can just call `this.queue()` inside the callbacks
-to transform data.
+    one
+    TWO
+    three
+    FOUR
 
-When you specify a falsy value for the `write` argument, this function is used
-to pass input data directly through to the output unmodified:
+You can use the `split` module to split input by newlines. For example:
 
-    function write (buf) { this.queue(buf) }
- 
-The `this.queue(null)` tells the consuming stream to not expect any more data.
+    var split = require('split');
+    process.stdin
+        .pipe(split())
+        .pipe(through(function (line) {
+            console.dir(line.toString());
+        }))
+    ;
 
-The default `end` function is just:
+Will buffer and split chunks on newlines before you get them. For example, for
+the `split.js` we just wrote we will get separate events for each line even
+though the data probably all arrives on the same chunk:
 
-    function end () { this.queue(null) }
+    $ echo -e 'one\ntwo\nthree' | node split.js
+    'one'
+    'two'
+    'three'
 
-For example, here is a program that fires the `write(buf)` and `end()` callbacks
-by calling `.write()` and `.end()` manually:
+Your own program should use `split` in this way, but you should transform the
+input and pipe the output through to `process.stdout`.
 
-    var through = require('through');
-    var tr = through(write, end);
-    tr.write('beep\n');
-    tr.write('boop\n');
-    tr.end();
-    
-    function write (buf) { console.dir(buf) }
-    function end () { console.log('__END__') }
-
-Instead of calling `console.dir(buf)`, your code should use `this.queue()` in
-your `write()` function to output upper-cased data.
-
-Don't forget to feed data into your stream from stdin and output data from
-stdout, which should look something like:
-
-    process.stdin.pipe(tr).pipe(process.stdout);
-
-Note that the chunks you will get from `process.stdin` are Buffers, not strings.
-You can call `buf.toString()` on a Buffer to get a string and strings can do
-`.toUpperCase()`.
-
-Make sure to `npm install through` in the directory where your solution
+Make sure to `npm install split through` in the directory where your solution
 file lives.
 
