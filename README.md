@@ -1,29 +1,59 @@
 # tutorial-nodejs-stream
 
-You will be given text on process.stdin. Buffer the text and reverse it using
-the `concat-stream` module before writing it to stdout.
+In this challenge, write an http server that uses a through stream to write back
+the request stream as upper-cased response data for POST requests.
 
-`concat-stream` is a write stream that you can pass a callback to to get the
-complete contents of a stream as a single buffer. Here's an example that uses
-concat to buffer POST content in order to JSON.parse() the submitted data:
+Streams aren't just for text files and stdin/stdout. Did you know that http
+request and response objects from node core's `http.createServer()` handler are
+also streams?
 
-    var concat = require('concat-stream');
+For example, we can stream a file to the response object:
+
     var http = require('http');
-    
+    var fs = require('fs');
+    var server = http.createServer(function (req, res) {
+        fs.createReadStream('file.txt').pipe(res);
+    });
+    server.listen(process.argv[2]);
+
+This is great because our server can response immediately without buffering
+everything in memory first.
+
+We can also stream a request to populate a file with data:
+
+    var http = require('http');
+    var fs = require('fs');
     var server = http.createServer(function (req, res) {
         if (req.method === 'POST') {
-            req.pipe(concat(function (body) {
-                var obj = JSON.parse(body);
-                res.end(Object.keys(obj).join('\n'));
-            }));
+            req.pipe(fs.createWriteStream('post.txt'));
         }
-        else res.end();
+        res.end('beep boop\n');
     });
-    server.listen(5000);
+    server.listen(process.argv[2]);
 
-In your adventure you'll only need to buffer input with `concat()` from
-process.stdin.
+You can test this post server with curl:
 
-Make sure to `npm install concat-stream` in the directory where your solution
-file is located.
+    $ node server.js 8000 &
+    $ echo hack the planet | curl -d@- http://localhost:8000
+    beep boop
+    $ cat post.txt
+    hack the planet
+
+Your http server should listen on the port given at process.argv[2] and convert
+the POST request written to it to upper-case using the same approach as the
+TRANSFORM example.
+
+As a refresher, here's an example with the default through callbacks explicitly
+defined:
+
+    var through = require('through')
+    process.stdin.pipe(through(write, end)).pipe(process.stdout);
+    
+    function write (buf) { this.queue(buf) }
+    function end () { this.queue(null)
+
+Do that, but send upper-case data in your http server in response to POST data.
+
+Make sure to `npm install through` in the directory where your solution file
+lives.
 

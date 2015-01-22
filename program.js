@@ -1,9 +1,19 @@
-var concat = require('concat-stream');
+var http = require('http');
 var through = require('through');
 
-var reverse = function(buff) {
-    console.log(buff.toString().split('').reverse().join(''));
+var upperCaseTranform = function(buff) {
+    this.queue(buff.toString().toUpperCase());
 };
 
-process.stdin
-    .pipe(concat(reverse));
+var server = http.createServer(function(req, res) {
+    if(req.method !== 'POST') {
+        res.writeHead(404, {'content-type': 'plain/text'});
+        res.write('Service not found : Only POST is supported');
+        res.end();
+    }
+    else {
+        req.pipe(through(upperCaseTranform)).pipe(res);
+    }
+});
+
+server.listen(process.argv[2]);
