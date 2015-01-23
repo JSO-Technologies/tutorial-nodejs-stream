@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "concat-stream": "^1.4.7",
+    "duplexer": "^0.1.1",
     "request": "^2.51.0",
     "split": "^0.3.2",
     "through": "^2.3.6",

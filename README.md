@@ -1,22 +1,21 @@
 # tutorial-nodejs-stream
 
-Your program will get some html written to stdin. Convert all the inner html to
-upper-case for elements with a class name of "loud".
+Write a program that exports a function that spawns a process from a `cmd`
+string and an `args` array and returns a single duplex stream joining together
+the stdin and stdout of the spawned process:
 
-You can use `trumpet` and `through` to solve this adventure.
-
-With `trumpet` you can create a transform stream from a css selector:
-
-    var trumpet = require('trumpet');
-    var fs = require('fs');
-    var tr = trumpet();
-    fs.createReadStream('input.html').pipe(tr);
+    var spawn = require('child_process').spawn;
     
-    var stream = tr.select('.beep').createStream();
+    module.exports = function (cmd, args) {
+        // spawn the process and return a single stream
+        // joining together the stdin and stdout here
+    };
 
-Now `stream` outputs all the inner html content at `'.beep'` and the data you
-write to `stream` will appear as the new inner html content.
+There is a very handy module you can use here: duplexer. The duplexer module
+exports a single function `duplexer(writable, readable)` that joins together a
+writable stream and readable stream into a single, readable/writable duplex
+stream.
 
-Make sure to `npm install trumpet through` in the directory where your solution
-file lives.
+If you use duplexer, make sure to `npm install duplexer` in the directory where
+your solution file is located.
 

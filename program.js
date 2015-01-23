@@ -1,16 +1,7 @@
-var trumpet = require('trumpet');
-var through = require('through');
+var spawn = require('child_process').spawn;
+var duplex = require('duplexer');
 
-var uppercaseTranform = function(buff) {
-    this.queue(buff.toString().toUpperCase());
+module.exports = function(cmd, args) {
+     var process = spawn(cmd, args);
+    return duplex(process.stdin, process.stdout);
 };
-
-var tr = trumpet();
-tr.pipe(process.stdout);
-
-var trStream = tr.select('.loud').createStream();
-trStream
-    .pipe(through(uppercaseTranform))
-    .pipe(trStream);
-
-process.stdin.pipe(tr);
