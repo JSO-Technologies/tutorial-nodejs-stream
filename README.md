@@ -1,21 +1,22 @@
 # tutorial-nodejs-stream
 
-In this adventure, write some browser code that uses the websocket-stream module
-to print the string "hello\n".
+Your program will get some html written to stdin. Convert all the inner html to
+upper-case for elements with a class name of "loud".
 
-Your solution file will be compiled with browserify and the verify script will
-prompt you to open `http://localhost:8000` in a browser to verify your solution.
+You can use `trumpet` and `through` to solve this adventure.
 
-To open a stream with websocket-stream on localhost:8000, just write:
+With `trumpet` you can create a transform stream from a css selector:
 
-    var ws = require('websocket-stream');
-    var stream = ws('ws://localhost:8000');
-   
-Then write the string "hello\n" to the stream and end the stream.
+    var trumpet = require('trumpet');
+    var fs = require('fs');
+    var tr = trumpet();
+    fs.createReadStream('input.html').pipe(tr);
+    
+    var stream = tr.select('.beep').createStream();
 
-The readme for websocket-stream has more info if you're curious about how to
-write the server side code: https://github.com/maxogden/websocket-stream
+Now `stream` outputs all the inner html content at `'.beep'` and the data you
+write to `stream` will appear as the new inner html content.
 
-Make sure to `npm install websocket-stream` in the directory where your solution
+Make sure to `npm install trumpet through` in the directory where your solution
 file lives.
 
